@@ -95,4 +95,19 @@ public struct Publish: Codable {
         case qoS = "n" /// CborKey.qoS.rawValue
         case payload = "k" /// CborKey.payload.rawValue
     }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        messageType = try values.decode(Int.self, forKey: .messageType)
+        topic = try values.decode(String.self, forKey: .topic)
+
+        if values.contains(.msgID) {
+            msgID = try values.decode(Int.self, forKey: .msgID)
+        } else {
+            msgID = 0
+        }
+
+        qoS = try values.decode(Int.self, forKey: .qoS)
+        payload = try values.decode(Data.self, forKey: .payload)
+    }
 }
